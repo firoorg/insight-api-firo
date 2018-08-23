@@ -63,7 +63,7 @@
     "bitcoreNode": "lib",
     "dependencies": {
         "async": "*",
-        "bitcore-lib-zcoin": "git://github.com/sn-ntu/bitcore-lib-zcoin.git",
+        "zcore-lib": "zcoinofficial/zcore-lib",
         "bitcore-message-zcoin": "git://github.com/sn-ntu/bitcore-message-zcoin.git",
         "body-parser": "^1.13.3",
         "compression": "^1.6.1",
