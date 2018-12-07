@@ -3,6 +3,7 @@
 var should = require('should');
 var sinon = require('sinon');
 var RichListController = require('../lib/richlist/richlist');
+var MongoConnector = require('../lib/richlist/mongoconnector');
 var bitcore = require('zcore-lib');
 var _ = require('lodash');
 
@@ -19,7 +20,7 @@ var blocks = copy_chain(chain1);
 describe('Rich List',function(){
     describe('softfolk',function(){
 
-        var getblock_f = function(idx,callback){
+        var getblock_f = (idx,callback)=>{
             for(var i=0;i<blocks.length;i++){
                 if(idx === blocks[i].hash || idx === blocks[i].height ){
                     callback(null, blocks[i]);
@@ -51,12 +52,15 @@ describe('Rich List',function(){
                 }
             },
             send_zmq_blockhash:(h)=>{
-                node.zmq_block_emitter.emit(node.zmq_block_ch,h);
+                node.zmq_block_emitter.emit("bitcoind/hashblock",h);
             }
         }
 
+        var mongoConn = new MongoConnector();
+        mongoConn.cleandb();
+
         it('test', function(done){
-            var controller = new RichListController({node:node});
+            var controller = new RichListController({node:node,conn:mongoConn});
             var test_step = 0;
             var res = {
                 status:(s)=>{
@@ -86,10 +90,10 @@ describe('Rich List',function(){
                         res.call();
             
                     }else if(test_step===1){
-                        r[0].address.should.equal("aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH");
+                        r[0].address.should.equal("a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5");
                         r[0].balance.should.equal((40).toFixed(8) );
 
-                        r[1].address.should.equal("a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5");
+                        r[1].address.should.equal("aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH");
                         r[1].balance.should.equal((40).toFixed(8));
 
                         r[2].address.should.equal("a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U");
@@ -124,6 +128,7 @@ describe('Rich List',function(){
 
                         res.call();
                     }else if(test_step===3){
+                        console.log(r);
                         r[0].address.should.equal("a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5");
                         r[0].balance.should.equal((40).toFixed(8) );
 
