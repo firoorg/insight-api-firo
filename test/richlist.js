@@ -56,11 +56,12 @@ describe('Rich List',function(){
             }
         }
 
-        var mongoConn = new MongoConnector();
-        mongoConn.cleandb();
+        // var mongoConn = new MongoConnector();
+        // mongoConn.cleandb();
 
         it('test', function(done){
-            var controller = new RichListController({node:node,conn:mongoConn});
+            // var controller = new RichListController({node:node,conn:mongoConn});
+            var controller = new RichListController({node:node});
             var test_step = 0;
             var res = {
                 status:(s)=>{
@@ -128,7 +129,6 @@ describe('Rich List',function(){
 
                         res.call();
                     }else if(test_step===3){
-                        console.log(r);
                         r[0].address.should.equal("a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5");
                         r[0].balance.should.equal((40).toFixed(8) );
 
