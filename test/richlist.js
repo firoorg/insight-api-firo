@@ -11,6 +11,8 @@ var chain1 = require('./data/richlist/chain1.json');
 var chain2 = require('./data/richlist/chain2.json');
 var transactions = require('./data/richlist/transactions.json');
 
+const MongoClient = require('mongodb').MongoClient;
+
 var copy_chain = obj => {
     return JSON.parse(JSON.stringify(obj));
 };
@@ -54,8 +56,18 @@ describe('Rich List', function() {
             }
         };
 
-        var mongoConn = new MongoConnector();
-        mongoConn.cleandb();
+        var mongoConn = new MongoConnector({
+            mongo: new MongoClient(
+                'mongodb://localhost:27017/insight_zcoin_test',
+                { useNewUrlParser: true }
+            )
+        });
+
+        beforeEach(() => {
+            return mongoConn.init().then(() => {
+                return mongoConn.cleandb();
+            });
+        });
 
         it('test', function(done) {
             var controller = new RichListController({
