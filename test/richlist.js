@@ -53,6 +53,14 @@ describe('Rich List', function() {
             },
             send_zmq_blockhash: h => {
                 node.zmq_block_emitter.emit('bitcoind/hashblock', h);
+            },
+            log: {
+                info: e => {
+                    console.log(e);
+                },
+                error: e => {
+                    console.error(e);
+                }
             }
         };
 
@@ -63,17 +71,28 @@ describe('Rich List', function() {
             )
         });
 
+        var controller = new RichListController({
+            node: node,
+            conn: mongoConn,
+            common: {
+                notReady: (err, res) => {
+                    res.status(503);
+                }
+            }
+        });
+
         beforeEach(() => {
-            return mongoConn.init().then(() => {
-                return mongoConn.cleandb();
-            });
+            return mongoConn
+                .init()
+                .then(() => {
+                    return mongoConn.cleandb();
+                })
+                .then(() => {
+                    return controller.init();
+                });
         });
 
         it('test', function(done) {
-            var controller = new RichListController({
-                node: node,
-                conn: mongoConn
-            });
             // var controller = new RichListController({node:node});
             var test_step = 0;
             var res = {
@@ -84,6 +103,7 @@ describe('Rich List', function() {
                     controller.list(null, res);
                 },
                 jsonp: r => {
+                    console.log(r);
                     if (test_step === 0) {
                         r.length.should.equal(2);
                         r[0].address.should.equal(
