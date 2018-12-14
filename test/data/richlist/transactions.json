@@ -51,6 +51,7 @@
             {
                 "prevTxId": "e48ac666d59401db247d509000cdb9c89fccccbe7d2cf408da42b79a01bc608e",
                 "outputIndex": 0,
+                "address": "aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH",
                 "satoshis": 4000000000
             }
         ],
@@ -68,7 +69,7 @@
             {
                 "prevTxId": "6e3baad5e5b9d270e0c66981f633e3433c502826f3b89f2533f52131aab8a1f6",
                 "outputIndex": 0,
-                "address": null,
+                "address": "a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5",
                 "satoshis": 4000000000
             }
         ],
