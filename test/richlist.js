@@ -93,7 +93,6 @@ describe('Rich List', function() {
         });
 
         it('test', function(done) {
-            // var controller = new RichListController({node:node});
             var test_step = 0;
             var res = {
                 status: s => {
@@ -109,12 +108,12 @@ describe('Rich List', function() {
                         r[0].address.should.equal(
                             'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
                         );
-                        r[0].balance.should.equal((80).toFixed(8));
+                        r[0].balance.should.equal(80*1e8);
 
                         r[1].address.should.equal(
                             'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
                         );
-                        r[1].balance.should.equal((4).toFixed(8));
+                        r[1].balance.should.equal((4)*1e8);
 
                         // invalidate a block
                         blocks.pop();
@@ -130,17 +129,17 @@ describe('Rich List', function() {
                         r[0].address.should.equal(
                             'a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5'
                         );
-                        r[0].balance.should.equal((40).toFixed(8));
+                        r[0].balance.should.equal((40)*1e8);
 
                         r[1].address.should.equal(
                             'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH'
                         );
-                        r[1].balance.should.equal((40).toFixed(8));
+                        r[1].balance.should.equal((40)*1e8);
 
                         r[2].address.should.equal(
                             'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
                         );
-                        r[2].balance.should.equal((4).toFixed(8));
+                        r[2].balance.should.equal((4)*1e8);
 
                         // confirm old chain
                         blocks = copy_chain(chain1);
@@ -157,12 +156,12 @@ describe('Rich List', function() {
                         r[0].address.should.equal(
                             'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
                         );
-                        r[0].balance.should.equal((80).toFixed(8));
+                        r[0].balance.should.equal((80)*1e8);
 
                         r[1].address.should.equal(
                             'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
                         );
-                        r[1].balance.should.equal((4).toFixed(8));
+                        r[1].balance.should.equal((4)*1e8);
 
                         // soft folk to chain2
                         blocks = copy_chain(chain2);
@@ -178,17 +177,17 @@ describe('Rich List', function() {
                         r[0].address.should.equal(
                             'a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5'
                         );
-                        r[0].balance.should.equal((40).toFixed(8));
+                        r[0].balance.should.equal((40)*1e8);
 
                         r[1].address.should.equal(
                             'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
                         );
-                        r[1].balance.should.equal((40).toFixed(8));
+                        r[1].balance.should.equal((40)*1e8);
 
                         r[2].address.should.equal(
                             'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
                         );
-                        r[2].balance.should.equal((4).toFixed(8));
+                        r[2].balance.should.equal((4)*1e8);
 
                         done();
                     }
