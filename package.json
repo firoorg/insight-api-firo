@@ -1,83 +1,86 @@
 {
-    "name": "insight-api-zcoin",
-    "description": "A Zcoin blockchain REST and web socket API service for Bitcore Node.",
-    "version": "0.4.5",
-    "repository": "git://github.com/sn-ntu/insight-api-zcoin.git",
-    "contributors": [
-        {
-            "name": "Gustavo Cortez",
-            "email": "cmgustavo83@gmail.com"
-        },
-        {
-            "name": "Ivan Socolsky",
-            "email": "jungans@gmail.com"
-        },
-        {
-            "name": "Juan Ignacio Sosa Lopez",
-            "email": "bechilandia@gmail.com"
-        },
-        {
-            "name": "Manuel Araoz",
-            "email": "manuelaraoz@gmail.com"
-        },
-        {
-            "name": "Matias Alejo Garcia",
-            "email": "ematiu@gmail.com"
-        },
-        {
-            "name": "Mario Colque",
-            "email": "colquemario@gmail.com"
-        },
-        {
-            "name": "Patrick Nagurny",
-            "email": "patrick@bitpay.com"
-        },
-        {
-            "name": "Braydon Fuller",
-            "email": "braydon@bitpay.com"
-        }
-    ],
-    "bugs": {
-        "url": "https://github.com/zcoinofficial/insight-api-zcoin/issues"
+  "name": "insight-api-zcoin",
+  "description": "A Zcoin blockchain REST and web socket API service for Bitcore Node.",
+  "version": "0.4.5",
+  "repository": "git://github.com/sn-ntu/insight-api-zcoin.git",
+  "contributors": [
+    {
+      "name": "Gustavo Cortez",
+      "email": "cmgustavo83@gmail.com"
     },
-    "homepage": "https://github.com/zcoinofficial/insight-api-zcoin",
-    "license": "MIT",
-    "keywords": [
-        "insight",
-        "insight api",
-        "blockchain",
-        "zcoin api",
-        "blockchain api",
-        "json",
-        "bitcore",
-        "zcoin api",
-        "bitcore-node-zcoin"
-    ],
-    "engines": {
-        "node": ">=0.12.0"
+    {
+      "name": "Ivan Socolsky",
+      "email": "jungans@gmail.com"
     },
-    "scripts": {
-        "test": "NODE_ENV=test mocha -R spec --recursive"
+    {
+      "name": "Juan Ignacio Sosa Lopez",
+      "email": "bechilandia@gmail.com"
     },
-    "main": "lib",
-    "bitcoreNode": "lib",
-    "dependencies": {
-        "async": "*",
-        "bitcore-message-zcoin": "zcoinofficial/bitcore-message-zcoin",
-        "body-parser": "^1.13.3",
-        "compression": "^1.6.1",
-        "functional-red-black-tree": "^1.0.1",
-        "lodash": "^2.4.1",
-        "lru-cache": "^4.0.1",
-        "morgan": "^1.7.0",
-        "request": "^2.64.0",
-        "zcore-lib": "zcoinofficial/zcore-lib"
+    {
+      "name": "Manuel Araoz",
+      "email": "manuelaraoz@gmail.com"
     },
-    "devDependencies": {
-        "chai": "^3.5.0",
-        "mocha": "^2.4.5",
-        "proxyquire": "^1.7.2",
-        "should": "^8.3.1",
-        "sinon": "^1.10.3"
+    {
+      "name": "Matias Alejo Garcia",
+      "email": "ematiu@gmail.com"
+    },
+    {
+      "name": "Mario Colque",
+      "email": "colquemario@gmail.com"
+    },
+    {
+      "name": "Patrick Nagurny",
+      "email": "patrick@bitpay.com"
+    },
+    {
+      "name": "Braydon Fuller",
+      "email": "braydon@bitpay.com"
     }
+  ],
+  "bugs": {
+    "url": "https://github.com/zcoinofficial/insight-api-zcoin/issues"
+  },
+  "homepage": "https://github.com/zcoinofficial/insight-api-zcoin",
+  "license": "MIT",
+  "keywords": [
+    "insight",
+    "insight api",
+    "blockchain",
+    "zcoin api",
+    "blockchain api",
+    "json",
+    "bitcore",
+    "zcoin api",
+    "bitcore-node-zcoin"
+  ],
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha -R spec --recursive"
+  },
+  "main": "lib",
+  "bitcoreNode": "lib",
+  "dependencies": {
+    "async": "*",
+    "bitcore-message-zcoin": "zcoinofficial/bitcore-message-zcoin",
+    "body-parser": "^1.13.3",
+    "compression": "^1.6.1",
+    "decimal.js": "^10.0.2",
+    "functional-red-black-tree": "^1.0.1",
+    "lodash": "^2.4.1",
+    "lru-cache": "^4.0.1",
+    "mongodb": "^3.1.10",
+    "morgan": "^1.7.0",
+    "p-limit": "^2.0.0",
+    "request": "^2.64.0",
+    "zcore-lib": "zcoinofficial/zcore-lib"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.2",
+    "should": "^8.3.1",
+    "sinon": "^1.10.3"
+  }
 }
