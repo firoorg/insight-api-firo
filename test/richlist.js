@@ -1,203 +1,203 @@
 'use strict';
 
-var should = require('should');
-var sinon = require('sinon');
-var RichListController = require('../lib/richlist/richlist');
-var MongoConnector = require('../lib/richlist/mongoconnector');
-var bitcore = require('zcore-lib');
-var _ = require('lodash');
-
-var chain1 = require('./data/richlist/chain1.json');
-var chain2 = require('./data/richlist/chain2.json');
-var transactions = require('./data/richlist/transactions.json');
-
+const should = require('should');
+const RichListController = require('../lib/richlist/richlist');
+const MongoConnector = require('../lib/richlist/mongoconnector');
 const MongoClient = require('mongodb').MongoClient;
 
-var copy_chain = obj => {
-    return JSON.parse(JSON.stringify(obj));
-};
+describe('RichListController', function() {
+    let mongo = new MongoClient('mongodb://localhost:27017/insight_zcoin_test', { useNewUrlParser: true });
+    let listeners = undefined;
+    let storage = undefined;
+    let controller = undefined;
+    let blocks = undefined;
+    let transactions = undefined;
 
-var blocks = copy_chain(chain1);
+    before(function() {
+        return mongo.connect();
+    });
 
-describe('Rich List', function() {
-    describe('softfolk', function() {
-        var getblock_f = (idx, callback) => {
-            for (var i = 0; i < blocks.length; i++) {
-                if (idx === blocks[i].hash || idx === blocks[i].height) {
-                    callback(null, blocks[i]);
-                    return;
-                }
+    beforeEach(function() {
+        listeners = {};
+        blocks = {
+            0: {
+                height: 0,
+                hash: '0000000000000000000000000000000000000000000000000000000000000000',
+                nextHash: '0000000000000000000000000000000000000000000000000000000000000001'
+            },
+            '0000000000000000000000000000000000000000000000000000000000000001': {
+                height: 1,
+                hash: '0000000000000000000000000000000000000000000000000000000000000001',
+                txids: [
+                    '1000000000000000000000000000000000000000000000000000000000000000'
+                ],
+                nextHash: '0000000000000000000000000000000000000000000000000000000000000002'
             }
-            callback(new Error('out of index'), null);
         };
-
-        var node = {
-            getBestBlockHash: function(callback) {
-                callback(null, blocks[blocks.length - 1].hash);
-            },
-            getBlockHeader: getblock_f,
-            getBlockOverview: getblock_f,
-            getBlock: getblock_f,
-            getDetailedTransaction: function(id, callback) {
-                for (var i = 0; i < transactions.length; i++)
-                    if (id === transactions[i].hash)
-                        callback(null, transactions[i]);
-            },
-            services: {
-                bitcoind: {
-                    subscribe: (ch, e) => {
-                        node.zmq_block_emitter = e;
-                        node.zmq_block_ch = ch;
+        transactions = {
+            '1000000000000000000000000000000000000000000000000000000000000000': {
+                height: 1,
+                hash: '1000000000000000000000000000000000000000000000000000000000000000',
+                inputs: [
+                    {
+                        prevTxId: undefined
                     }
-                }
-            },
-            send_zmq_blockhash: h => {
-                node.zmq_block_emitter.emit('bitcoind/hashblock', h);
-            },
-            log: {
-                info: e => {
-                    console.log(e);
-                },
-                error: e => {
-                    console.error(e);
-                }
+                ],
+                outputs: [
+                    {
+                        address: 'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH',
+                        satoshis: 50 * 1e8
+                    }
+                ]
             }
         };
 
-        var mongoConn = new MongoConnector({
-            mongo: new MongoClient(
-                'mongodb://localhost:27017/insight_zcoin_test',
-                { useNewUrlParser: true }
-            )
-        });
-
-        var controller = new RichListController({
-            node: node,
-            conn: mongoConn,
-            common: {
-                notReady: (err, res) => {
-                    res.status(503);
+        storage = new MongoConnector({ mongo: mongo });
+        controller = new RichListController({
+            conn: storage,
+            node: {
+                services: {
+                    bitcoind: {
+                        subscribe: function(name, listener) {
+                            let list = listeners[name] || [];
+                            list.push(listener);
+                            listeners[name] = list;
+                        },
+                        unsubscribe: function(name, listener) {
+                            let list = listeners[name];
+                            let index = list ? list.indexOf(listener) : undefined;
+                            if (index !== undefined) {
+                                list.splice(index, 1);
+                            }
+                        }
+                    }
+                },
+                getBlockHeader: function(id, cb) {
+                    let block = blocks[id];
+                    if (block) {
+                        cb(undefined, block);
+                    } else {
+                        cb(new Error('block not found'));
+                    }
+                },
+                getBlockOverview: function(id, cb) {
+                    let block = blocks[id];
+                    if (block) {
+                        cb(undefined, block);
+                    } else {
+                        cb(new Error('block not found'));
+                    }
+                },
+                getDetailedTransaction: function(id, cb) {
+                    let tx = transactions[id];
+                    if (tx) {
+                        cb(undefined, tx);
+                    } else {
+                        cb(new Error('transaction not found'));
+                    }
                 }
             }
         });
 
-        beforeEach(() => {
-            return mongoConn
-                .init()
-                .then(() => {
-                    return mongoConn.cleandb();
-                })
-                .then(() => {
-                    return controller.init();
-                });
-        });
+        return storage.init().then(() => storage.cleandb());
+    });
 
-        it('test', function(done) {
-            var test_step = 0;
-            var res = {
-                status: s => {
-                    setTimeout(res.call, 100);
-                },
-                call: () => {
-                    controller.list(null, res);
-                },
-                jsonp: r => {
-                    console.log(r);
-                    if (test_step === 0) {
-                        r.length.should.equal(2);
-                        r[0].address.should.equal(
-                            'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
-                        );
-                        r[0].balance.should.equal(80*1e8);
+    afterEach(function() {
+        return controller.stop();
+    });
 
-                        r[1].address.should.equal(
-                            'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
-                        );
-                        r[1].balance.should.equal((4)*1e8);
-
-                        // invalidate a block
-                        blocks.pop();
-
-                        test_step++;
-
-                        node.getBestBlockHash((err, h) => {
-                            node.send_zmq_blockhash(h);
-                        });
-
-                        res.call();
-                    } else if (test_step === 1) {
-                        r[0].address.should.equal(
-                            'a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5'
-                        );
-                        r[0].balance.should.equal((40)*1e8);
-
-                        r[1].address.should.equal(
-                            'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH'
-                        );
-                        r[1].balance.should.equal((40)*1e8);
-
-                        r[2].address.should.equal(
-                            'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
-                        );
-                        r[2].balance.should.equal((4)*1e8);
-
-                        // confirm old chain
-                        blocks = copy_chain(chain1);
-
-                        test_step++;
-
-                        node.getBestBlockHash((err, h) => {
-                            node.send_zmq_blockhash(h);
-                        });
-
-                        res.call();
-                    } else if (test_step === 2) {
-                        r.length.should.equal(2);
-                        r[0].address.should.equal(
-                            'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
-                        );
-                        r[0].balance.should.equal((80)*1e8);
-
-                        r[1].address.should.equal(
-                            'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
-                        );
-                        r[1].balance.should.equal((4)*1e8);
-
-                        // soft folk to chain2
-                        blocks = copy_chain(chain2);
-
-                        test_step++;
-
-                        node.getBestBlockHash((err, h) => {
-                            node.send_zmq_blockhash(h);
-                        });
-
-                        res.call();
-                    } else if (test_step === 3) {
-                        r[0].address.should.equal(
-                            'a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5'
-                        );
-                        r[0].balance.should.equal((40)*1e8);
-
-                        r[1].address.should.equal(
-                            'aGm5jzFHLCt4pQLGwoHD2WijDmqbXfeWCz'
-                        );
-                        r[1].balance.should.equal((40)*1e8);
-
-                        r[2].address.should.equal(
-                            'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U'
-                        );
-                        r[2].balance.should.equal((4)*1e8);
-
-                        done();
-                    }
-                }
+    describe('#list()', function() {
+        it('should handle softfork correctly', function(done) {
+            // chain to be discarded
+            blocks['0000000000000000000000000000000000000000000000000000000000000002'] = {
+                height: 2,
+                hash: '0000000000000000000000000000000000000000000000000000000000000002',
+                txids: [
+                    '1000000000000000000000000000000000000000000000000000000000000001'
+                ]
             };
-            node.getBestBlockHash((err, h) => {
-                node.send_zmq_blockhash(h);
+
+            transactions['1000000000000000000000000000000000000000000000000000000000000001'] = {
+                height: 2,
+                hash: '1000000000000000000000000000000000000000000000000000000000000001',
+                inputs: [
+                    {
+                        prevTxId: '1000000000000000000000000000000000000000000000000000000000000000',
+                        outputIndex: 0,
+                        address: 'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH',
+                        satoshis: 50 * 1e8
+                    }
+                ],
+                outputs: [
+                    {
+                        address: 'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH',
+                        satoshis: 44 * 1e8
+                    },
+                    {
+                        address: 'a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U',
+                        satoshis: 5 * 1e8
+                    }
+                ]
+            };
+
+            controller.once('latestBlockScanned', function() {
+                // new chain
+                delete blocks['0000000000000000000000000000000000000000000000000000000000000002'];
+                delete transactions['1000000000000000000000000000000000000000000000000000000000000001'];
+
+                blocks['0000000000000000000000000000000000000000000000000000000000000001'].nextHash = '0000000000000000000000000000000000000000000000000000000000000003';
+                blocks['0000000000000000000000000000000000000000000000000000000000000003'] = {
+                    height: 2,
+                    hash: '0000000000000000000000000000000000000000000000000000000000000003',
+                    txids: [
+                        '1000000000000000000000000000000000000000000000000000000000000002'
+                    ]
+                };
+
+                transactions['1000000000000000000000000000000000000000000000000000000000000002'] = {
+                    height: 2,
+                    hash: '1000000000000000000000000000000000000000000000000000000000000002',
+                    inputs: [
+                        {
+                            prevTxId: '1000000000000000000000000000000000000000000000000000000000000000',
+                            outputIndex: 0,
+                            address: 'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH',
+                            satoshis: 50 * 1e8
+                        }
+                    ],
+                    outputs: [
+                        {
+                            address: 'aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH',
+                            satoshis: 40 * 1e8
+                        },
+                        {
+                            address: 'a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5',
+                            satoshis: 9 * 1e8
+                        }
+                    ]
+                };
+
+                controller.once('latestBlockScanned', function() {
+                    controller.list(undefined, {
+                        jsonp: function(list) {
+                            list.length.should.equal(2);
+                            list[0].address.should.equal('aNUjTa4XLrCpRL5hqJf8Y4T6Cn3pZLLRUH');
+                            list[0].balance.should.equal(40 * 1e8);
+                            list[1].address.should.equal('a9hZRxDCTomprkk4ajNUbGCGJbTTnXNcR5');
+                            list[1].balance.should.equal(9 * 1e8);
+
+                            done();
+                        }
+                    });
+                });
+
+                // parse updated blocks
+                for (let listener of listeners['hashblock']) {
+                    listener.emit('bitcoind/hashblock');
+                }
             });
 
-            res.call();
+            controller.init();
         });
     });
 });
