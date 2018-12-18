@@ -72,7 +72,6 @@
     "lru-cache": "^4.0.1",
     "mongodb": "^3.1.10",
     "morgan": "^1.7.0",
-    "p-limit": "^2.0.0",
     "request": "^2.64.0",
     "zcore-lib": "zcoinofficial/zcore-lib"
   },
