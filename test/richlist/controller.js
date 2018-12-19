@@ -1,8 +1,8 @@
 'use strict';
 
 const should = require('should');
-const RichListController = require('../lib/richlist/richlist');
-const MongoConnector = require('../lib/richlist/mongoconnector');
+const RichListController = require('../../lib/richlist/controller');
+const MongoConnector = require('../../lib/richlist/mongoconnector');
 const MongoClient = require('mongodb').MongoClient;
 
 describe('RichListController', function() {
