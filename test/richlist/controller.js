@@ -2,7 +2,7 @@
 
 const should = require('should');
 const RichListController = require('../../lib/richlist/controller');
-const MongoConnector = require('../../lib/richlist/mongoconnector');
+const RichListStorage = require('../../lib/richlist/storage/mongo');
 const MongoClient = require('mongodb').MongoClient;
 
 describe('RichListController', function() {
@@ -52,9 +52,9 @@ describe('RichListController', function() {
             }
         };
 
-        storage = new MongoConnector({ mongo: mongo });
+        storage = new RichListStorage({ mongo: mongo });
         controller = new RichListController({
-            conn: storage,
+            storage,
             node: {
                 services: {
                     bitcoind: {
