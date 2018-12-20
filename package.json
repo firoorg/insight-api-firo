@@ -63,6 +63,7 @@
     "bitcoreNode": "lib",
     "dependencies": {
         "async": "*",
+        "zcore-lib": "zcoinofficial/zcore-lib",
         "bitcore-message-zcoin": "zcoinofficial/bitcore-message-zcoin",
         "body-parser": "^1.13.3",
         "compression": "^1.6.1",
@@ -72,8 +73,7 @@
         "lru-cache": "^4.0.1",
         "mongodb": "^3.1.10",
         "morgan": "^1.7.0",
-        "request": "^2.64.0",
-        "zcore-lib": "zcoinofficial/zcore-lib"
+        "request": "^2.64.0"
     },
     "devDependencies": {
         "chai": "^3.5.0",
