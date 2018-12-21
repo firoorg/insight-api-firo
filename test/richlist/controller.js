@@ -1,13 +1,17 @@
 'use strict';
 
+const EventEmitter = require('events');
 const should = require('should');
 const RichListController = require('../../lib/richlist/controller');
 const RichListStorage = require('../../lib/richlist/storage/mongo');
 const MongoClient = require('mongodb').MongoClient;
 
+class FakeBitcoinService extends EventEmitter {
+}
+
 describe('RichListController', function() {
     let mongo = new MongoClient('mongodb://localhost:27017/insight_zcoin_test', { useNewUrlParser: true });
-    let listeners = undefined;
+    let bitcoind = undefined;
     let storage = undefined;
     let controller = undefined;
     let blocks = undefined;
@@ -18,7 +22,6 @@ describe('RichListController', function() {
     });
 
     beforeEach(function() {
-        listeners = {};
         blocks = {
             0: {
                 hash: '4381deb85b1b2c9843c222944b616d997516dcbd6a964e1eaf0def0830695233',
@@ -86,6 +89,7 @@ describe('RichListController', function() {
             }
         };
 
+        bitcoind = new FakeBitcoinService();
         storage = new RichListStorage({ mongo: mongo });
         controller = new RichListController({
             storage,
@@ -94,22 +98,7 @@ describe('RichListController', function() {
                     info: function() {
                     }
                 },
-                services: {
-                    bitcoind: {
-                        subscribe: function(name, listener) {
-                            let list = listeners[name] || [];
-                            list.push(listener);
-                            listeners[name] = list;
-                        },
-                        unsubscribe: function(name, listener) {
-                            let list = listeners[name];
-                            let index = list ? list.indexOf(listener) : undefined;
-                            if (index !== undefined) {
-                                list.splice(index, 1);
-                            }
-                        }
-                    }
-                },
+                services: { bitcoind },
                 getBlockHeader: function(id, cb) {
                     let block = blocks[id];
                     if (block) {
@@ -255,12 +244,11 @@ describe('RichListController', function() {
                 });
 
                 // parse updated blocks
-                for (let listener of listeners['hashblock']) {
-                    listener.emit('bitcoind/hashblock');
-                }
+                bitcoind.emit('block');
             });
 
             controller.init();
+            bitcoind.emit('ready');
         });
     });
 });
