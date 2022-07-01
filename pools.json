@@ -378,5 +378,12 @@
         "searchStrings": [
             "/mph/"
         ]
+    },
+    {
+        "poolName": "Molepool",
+        "url": "https://molepool.com/",
+        "searchStrings": [
+            "/Molepool/"
+        ]
     }
 ]
