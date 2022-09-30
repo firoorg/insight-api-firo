@@ -400,5 +400,13 @@
         "searchStrings": [
             "MinerPool"
         ]
+    },
+    {
+        "poolName": "BadHasher",
+        "url": "https://badhasher.com/pool/Firo",
+        "searchStrings": [
+            "badhasher",
+            "coinminerz"
+        ]
     }
 ]
