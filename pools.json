@@ -408,5 +408,12 @@
             "badhasher",
             "coinminerz"
         ]
-    }
+    },
+    {
+        "poolName": "StratumSRV",
+        "url": "https://",
+        "searchStrings": [
+            "StratumSRV"
+        ]
+    },
 ]
