@@ -408,5 +408,12 @@
             "badhasher",
             "coinminerz"
         ]
+    },
+    {
+        "poolName": "RaptorHash",
+        "url": "https://raptorhash.com/",
+        "searchStrings": [
+            "raptorhash"
+        ]
     }
 ]
