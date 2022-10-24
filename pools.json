@@ -415,5 +415,12 @@
         "searchStrings": [
             "raptorhash"
         ]
+    },
+    {
+        "poolName": "K1Pool",
+        "url": "https://k1pool.com",
+        "searchStrings": [
+            "K1Pool"
+        ]
     }
 ]
