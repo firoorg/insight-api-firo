@@ -422,5 +422,12 @@
         "searchStrings": [
             "K1Pool"
         ]
+    },
+    {
+        "poolName": "Picopool",
+        "url": "https://picopool.org/",
+        "searchStrings": [
+            "p⋅i⋅c⋅o⋅p⋅o⋅o⋅l"
+        ]
     }
 ]
