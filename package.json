@@ -99,7 +99,7 @@
   ],
   "dependencies": {
     "async": "*",
-    "bitcore-message-zcoin": "github:firoorg/bitcore-message-zcoin",
+    "bitcore-message-zcoin": "github:levonpetrosyan93/bitcore-message-zcoin",
     "body-parser": "^1.13.3",
     "compression": "^1.6.1",
     "decimal.js": "^10.0.2",
@@ -110,7 +110,7 @@
     "morgan": "^1.7.0",
     "pg-promise": "8.7.5",
     "request": "^2.64.0",
-    "zcore-lib": "github:firoorg/zcore-lib"
+    "zcore-lib": "github:levonpetrosyan93/zcore-lib"
   },
   "description": "A Zcoin blockchain REST and web socket API service for Bitcore Node.",
   "devDependencies": {
