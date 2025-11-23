@@ -429,5 +429,19 @@
         "searchStrings": [
             "p⋅i⋅c⋅o⋅p⋅o⋅o⋅l"
         ]
+    },
+    {
+        "poolName": "ethcore.ru",
+        "url": "https://ethcore.ru/",
+        "searchStrings": [
+            "ethcore.ru"
+        ]
+    },
+    {
+        "poolName": "Cedric CRISPIN",
+        "url": "https://firo.cedric-crispin.com/",
+        "searchStrings": [
+            "Cedric CRISPIN"
+        ]
     }
 ]
