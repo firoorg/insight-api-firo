@@ -443,5 +443,12 @@
         "searchStrings": [
             "Cedric CRISPIN"
         ]
+    },
+        {
+        "poolName": "Rplant.xyz",
+        "url": "https://pool.rplant.xyz/",
+        "searchStrings": [
+            "pool.rplant.xyz"
+        ]
     }
 ]
