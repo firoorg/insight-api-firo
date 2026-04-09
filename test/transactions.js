@@ -203,6 +203,156 @@ describe('Transactions', function () {
         });
     });
 
+    describe('/tx/:txid/output/:index/status', function () {
+        it('should return unspent status for an unspent output', function (done) {
+            var transactions = new TxController({});
+            var req = {
+                params: {
+                    txid: 'unspent-tx',
+                    index: '0'
+                },
+                transaction: {
+                    vout: [
+                        {
+                            spentTxId: null,
+                            spentIndex: null,
+                            spentHeight: null
+                        }
+                    ]
+                }
+            };
+            var res = {
+                jsonp: function (status) {
+                    should(status).eql({
+                        txid: 'unspent-tx',
+                        index: 0,
+                        spent: false,
+                        unspent: true
+                    });
+                    done();
+                }
+            };
+
+            transactions.outputStatus(req, res);
+        });
+
+        it('should return spent status for a spent output', function (done) {
+            var transactions = new TxController({});
+            var req = {
+                params: {
+                    txid: 'spent-tx',
+                    index: '1'
+                },
+                transaction: {
+                    vout: [
+                        {},
+                        {
+                            spentTxId: 'spender-tx',
+                            spentIndex: 2,
+                            spentHeight: 123
+                        }
+                    ]
+                }
+            };
+            var res = {
+                jsonp: function (status) {
+                    should(status).eql({
+                        txid: 'spent-tx',
+                        index: 1,
+                        spent: true,
+                        unspent: false,
+                        spentTxId: 'spender-tx',
+                        spentIndex: 2,
+                        spentHeight: 123
+                    });
+                    done();
+                }
+            };
+
+            transactions.outputStatus(req, res);
+        });
+
+        it('should reject an invalid output index', function (done) {
+            var transactions = new TxController({});
+            var req = {
+                params: {
+                    txid: 'txid',
+                    index: '-1'
+                },
+                transaction: {
+                    vout: []
+                }
+            };
+            var res = {
+                status: function (code) {
+                    code.should.equal(400);
+                    return {
+                        send: function (message) {
+                            message.should.equal('Invalid output index');
+                            done();
+                        }
+                    };
+                }
+            };
+
+            transactions.outputStatus(req, res);
+        });
+    });
+
+    describe('/tx/:txid/mempool', function () {
+        it('should return mempool status for an unconfirmed transaction', function (done) {
+            var transactions = new TxController({});
+            var req = {
+                params: {
+                    txid: 'mempool-tx'
+                },
+                transaction: {
+                    confirmations: 0
+                }
+            };
+            var res = {
+                jsonp: function (status) {
+                    should(status).eql({
+                        txid: 'mempool-tx',
+                        inMempool: true
+                    });
+                    done();
+                }
+            };
+
+            transactions.mempoolStatus(req, res);
+        });
+
+        it('should return not found for a confirmed transaction', function (done) {
+            var transactions = new TxController({
+                log: {
+                    error: sinon.stub()
+                }
+            });
+            var req = {
+                params: {
+                    txid: 'confirmed-tx'
+                },
+                transaction: {
+                    confirmations: 1
+                }
+            };
+            var res = {
+                status: function (code) {
+                    code.should.equal(404);
+                    return {
+                        send: function (message) {
+                            message.should.equal('Not found');
+                            done();
+                        }
+                    };
+                }
+            };
+
+            transactions.mempoolStatus(req, res);
+        });
+    });
+
     describe('/txs', function () {
         var sandbox = sinon.sandbox.create();
         afterEach(function () {
