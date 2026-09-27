@@ -455,7 +455,8 @@
         "poolName": "Zed",
         "url": "",
         "searchStrings": [
-            "'Zed'"
+            "'Zed'",
+            "Zed"
         ]
     }
 ]
